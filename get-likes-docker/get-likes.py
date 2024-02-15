@@ -73,23 +73,17 @@ def get_videos():
                 }
                 videos.append(video_data)
             cursor = data['cursor']
-    data, _ = supabase.table('vars').update({'value': videos[0]['video_id']}).eq('name', 'last_video').execute()
+    if videos:
+        data, _ = supabase.table('vars').update({'value': videos[0]['video_id']}).eq('name', 'last_video').execute()
     return videos
 
-def upsert_artist(user_id, unique_id):
-    query = f"SELECT upsert_artist({user_id}, '{unique_id}')"
-    supabase.query(query)
-
+# takes a list of videos and returns unique usernames in it and adds date
 def prepare_accounts(videos):
     unique_users = []
     for item in videos:
         user_id = item.get('user_id')
-        user_unique_id = item.get('user_unique_id')
-        existing_user = supabase.table('artists').select('*').eq('id', user_id).execute()
-        if len(existing_user.data) == 0:
-            unique_users.append({'id': user_id, 'unique_id': user_unique_id})
-        elif existing_user.data[0]['unique_id'] != user_unique_id:
-            unique_users.append({'id': user_id, 'unique_id': user_unique_id})
+        if user_id and user_id not in [user.get('id') for user in unique_users]:
+            unique_users.append({'id': user_id, 'unique_id': item.get('user_unique_id'), 'date': datetime.datetime.now().isoformat()})
     return unique_users
 
 
@@ -101,8 +95,7 @@ def get_last_video():
 
 videos = get_videos()
 unique_accounts = prepare_accounts(videos)
-for account in unique_accounts:
-    upsert_artist(account['id'], account['unique_id'])
+data, count = supabase.table('artists').upsert(unique_accounts).execute()
 
 
 # DB_PASSWORD = '7Fx%%kmiQ/g#nd/'
