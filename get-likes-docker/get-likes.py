@@ -1,5 +1,4 @@
 import requests
-import datetime
 from supabase import create_client, Client
 from fake_useragent import UserAgent
 
@@ -83,7 +82,7 @@ def prepare_accounts(videos):
     for item in videos:
         user_id = item.get('user_id')
         if user_id and user_id not in [user.get('id') for user in unique_users]:
-            unique_users.append({'id': user_id, 'unique_id': item.get('user_unique_id'), 'date': datetime.datetime.now().isoformat()})
+            unique_users.append({'id': user_id, 'unique_id': item.get('user_unique_id')})
     return unique_users
 
 
@@ -95,7 +94,8 @@ def get_last_video():
 
 videos = get_videos()
 unique_accounts = prepare_accounts(videos)
-data, count = supabase.table('artists').upsert(unique_accounts).execute()
+data, error = supabase.rpc('add_artists', {'data': unique_accounts}).execute()
+
 
 
 # DB_PASSWORD = '7Fx%%kmiQ/g#nd/'
