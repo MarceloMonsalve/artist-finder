@@ -19,6 +19,7 @@ const App = () => {
 		const { data, error } = await supabase
 			.from('artists')
 			.select('unique_id, date, visible')
+			.order('date', { ascending: false })
 			.eq('visible', true);
 
 		if (error) {
