@@ -58,9 +58,6 @@ def get_following(user_id, max_followers, allow_verified):
 
     return accounts_to_save
 
-
-
-
 while(True):
     response = supabase.table('account_queue').select("*").eq('seen', False).limit(1).execute()
     if response.data:
