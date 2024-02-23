@@ -58,7 +58,7 @@ def get_following(user_id, max_followers, allow_verified):
 
     return accounts_to_save
 
-while(True):
+for count in range(20):
     response = supabase.table('account_queue').select("*").eq('seen', False).limit(1).execute()
     if response.data:
         id, unique_id = response.data[0]["id"], response.data[0]["unique_id"]
