@@ -53,7 +53,7 @@ const App = () => {
 	return (
 		<div className="App">
 			<h1>TikTok Artist Finder</h1>
-			<ArtistTable artists={artists} removeArtist={removeArtist} />
+			{/* <ArtistTable artists={artists} removeArtist={removeArtist} /> */}
 		</div>
 	);
 };
